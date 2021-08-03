@@ -236,7 +236,7 @@ abstract public class AbstractCppCodegen extends DefaultCodegen implements Codeg
 
     @Override
     public String toOperationId(String operationId) {
-        if (isReservedWord(operationId)) {
+        if (isReservedWord(operationId) || operationId.matches("^\\d.*")) {
             LOGGER.warn("{} (reserved word) cannot be used as method name. Renamed to {}", operationId, escapeReservedWord(operationId));
             return escapeReservedWord(operationId);
         }
