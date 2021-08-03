@@ -105,6 +105,7 @@ public class CppQtAbstractCodegen extends AbstractCppCodegen implements CodegenC
         typeMapping.put("map", "QMap");
         typeMapping.put("set", "QSet");
         typeMapping.put("object", PREFIX + "Object");
+        typeMapping.put("AnyType", PREFIX + "Object");
         // mapped as "file" type for OAS 3.0
         typeMapping.put("ByteArray", "QByteArray");
         //   UUID support - possible enhancement : use QUuid instead of QString.
