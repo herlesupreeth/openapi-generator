@@ -130,18 +130,19 @@ public class CppPistacheServerCodegen extends AbstractCppCodegen {
         typeMapping.put("map", "std::map");
         typeMapping.put("set", "std::vector");
         typeMapping.put("file", "std::string");
-        typeMapping.put("object", "Object");
+        typeMapping.put("object", "nlohmann::json");
         typeMapping.put("binary", "std::string");
         typeMapping.put("number", "double");
         typeMapping.put("UUID", "std::string");
         typeMapping.put("URI", "std::string");
         typeMapping.put("ByteArray", "std::string");
+        typeMapping.put("AnyType", "nlohmann::json");
 
         super.importMapping = new HashMap<String, String>();
         importMapping.put("std::vector", "#include <vector>");
         importMapping.put("std::map", "#include <map>");
         importMapping.put("std::string", "#include <string>");
-        importMapping.put("Object", "#include \"Object.h\"");
+        importMapping.put("nlohmann::json", "#include <nlohmann/json.hpp>");
     }
 
     @Override
@@ -280,7 +281,6 @@ public class CppPistacheServerCodegen extends AbstractCppCodegen {
                     }
                 }
             }
-
             op.httpMethod = op.httpMethod.substring(0, 1).toUpperCase(Locale.ROOT) + op.httpMethod.substring(1).toLowerCase(Locale.ROOT);
 
             for (CodegenParameter param : op.allParams) {
