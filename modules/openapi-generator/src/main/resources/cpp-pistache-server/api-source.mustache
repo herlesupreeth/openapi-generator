@@ -42,7 +42,7 @@ std::pair<Pistache::Http::Code, std::string> {{classname}}::handleParsingExcepti
     } catch ({{helpersNamespace}}::ValidationException &e) {
         return std::make_pair(Pistache::Http::Code::Bad_Request, e.what());
     } catch (std::exception &e) {
-        return std::make_pair(Pistache::Http::Code::Internal_Server_Error, e.what())
+        return std::make_pair(Pistache::Http::Code::Internal_Server_Error, e.what());
     }
 }
 
@@ -77,9 +77,35 @@ void {{classname}}::{{operationIdSnakeCase}}_handler(const Pistache::Rest::Reque
     std::optional<{{^isContainer}}{{dataType}}{{/isContainer}}{{#isArray}}std::vector<{{items.baseType}}>{{/isArray}}> {{paramName}};
     if({{paramName}}Query.has_value()){
         {{^isContainer}}{{dataType}}{{/isContainer}}{{#isArray}}std::vector<{{items.baseType}}>{{/isArray}} valueQuery_instance;
+        {{^isPrimitiveType}}
+        nlohmann::json::parse({{paramName}}Query.value()).get_to(valueQuery_instance);
+        {{^isContainer}}
+        valueQuery_instance.validate();
+        {{/isContainer}}
+        {{#isContainer}}
+        {{#items.isModel}}
+        for (auto el : valueQuery_instance) {
+        {{#isArray}}
+            el.validate();
+        {{/isArray}}
+        {{#isMap}}
+            el.second.validate();
+        {{/isMap}}
+        }
+        {{paramName}} = valueQuery_instance;
+        {{/items.isModel}}
+        {{^items.isModel}}
         if(fromStringValue({{paramName}}Query.value(), valueQuery_instance)){
             {{paramName}} = valueQuery_instance;
         }
+        {{/items.isModel}}
+        {{/isContainer}}
+        {{/isPrimitiveType}}
+        {{#isPrimitiveType}}
+        if(fromStringValue({{paramName}}Query.value(), valueQuery_instance)){
+            {{paramName}} = valueQuery_instance;
+        }
+        {{/isPrimitiveType}}
     }
     {{/queryParams}}
     {{/hasQueryParams}}{{#hasHeaderParams}}
@@ -94,7 +120,24 @@ void {{classname}}::{{operationIdSnakeCase}}_handler(const Pistache::Rest::Reque
     {{#bodyParam}}
     {{^isPrimitiveType}}
         nlohmann::json::parse(request.body()).get_to({{paramName}});
+        {{^isContainer}}
         {{paramName}}.validate();
+        {{/isContainer}}
+        {{#isContainer}}
+        {{#items.isModel}}
+        for (auto el : {{paramName}}) {
+        {{#isArray}}
+            el.validate();
+        {{/isArray}}
+        {{#isMap}}
+            el.second.validate();
+        {{/isMap}}
+        }
+        {{/items.isModel}}
+        {{^items.isModel}}
+        {{paramName}} = request.body();
+        {{/items.isModel}}
+        {{/isContainer}}
     {{/isPrimitiveType}}
     {{#isPrimitiveType}}
         {{paramName}} = request.body();
