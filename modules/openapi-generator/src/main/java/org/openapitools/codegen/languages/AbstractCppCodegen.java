@@ -191,6 +191,10 @@ abstract public class AbstractCppCodegen extends DefaultCodegen implements Codeg
                 || languageSpecificPrimitives.contains(type)) {
             return type;
         } else {
+            if (isReservedWord(type) || type.matches("^\\d.*")) {
+                String name = escapeReservedWord(type);
+                return sanitizeName(modelNamePrefix + Character.toUpperCase(name.charAt(0)) + name.substring(1));
+            }
             return sanitizeName(modelNamePrefix + Character.toUpperCase(type.charAt(0)) + type.substring(1));
         }
     }
