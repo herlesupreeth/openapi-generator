@@ -117,7 +117,7 @@ public class CppPistacheServerCodegen extends AbstractCppCodegen {
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
 
         languageSpecificPrimitives = new HashSet<String>(
-                Arrays.asList("int", "char", "bool", "long", "float", "double", "int32_t", "int64_t"));
+                Arrays.asList("int", "char", "bool", "long", "float", "double", "int32_t", "int64_t", "std::string"));
 
         typeMapping = new HashMap<String, String>();
         typeMapping.put("date", "std::string");
